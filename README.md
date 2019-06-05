@@ -9,12 +9,9 @@ PowerShell module for Microsoft Planner
 $PlannerModule = Get-Module -Name "PlannerModule" -ListAvailable
 
 if ($PlannerModule -eq $null) {
-
-    Write-Output "Planner PowerShell module not found, Start install the module"
+    Write-host "Planner PowerShell module not found, Start install the module"
     Install-Module "PlannerModule" -AllowClobber -Force
-
 }
-
 
 #Connect to Microsoft Planner
 Connect-Planner -ForceNonInteractive True
@@ -25,11 +22,9 @@ $PlanName = "PowerShell Test Plan 03"
 $BucketName = "PowerShell bucket"
 $TaskName = "Test Task"
 
-
 #Create new plan with Private O365 Group (this will also create new O365 Group), can also create public group
 #$result01 = New-PlannerPlan -PlanName $PlanName -visibility Private
 #$PlannerPlanID = $result01.id
-
 
 #Create New Office 365 Group
 $responde = New-AADUnifiedGroup -GroupName $GroupName -visibility Private
