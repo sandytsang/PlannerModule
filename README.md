@@ -3,15 +3,16 @@ PowerShell module for Microsoft Planner
 
 #Examples:
 
-#This requries Planner Module 1.0.1.7
 #Check Planner PowerShell module
 
 $PlannerModule = Get-Module -Name "PlannerModule" -ListAvailable
 
-if ($PlannerModule -eq $null) {
-    Write-host "Planner PowerShell module not found, Start install the module"
-    Install-Module "PlannerModule" -AllowClobber -Force
+if ($PlannerModule -eq $null)
+{
+	Write-host "Planner PowerShell module not found, Start install the module"
+	Install-Module "PlannerModule" -AllowClobber -Force
 }
+
 
 #Connect to Microsoft Planner
 Connect-Planner -ForceNonInteractive True
@@ -22,9 +23,11 @@ $PlanName = "PowerShell Test Plan 03"
 $BucketName = "PowerShell bucket"
 $TaskName = "Test Task"
 
+
 #Create new plan with Private O365 Group (this will also create new O365 Group), can also create public group
 #$result01 = New-PlannerPlan -PlanName $PlanName -visibility Private
 #$PlannerPlanID = $result01.id
+
 
 #Create New Office 365 Group
 $responde = New-AADUnifiedGroup -GroupName $GroupName -visibility Private
@@ -45,7 +48,7 @@ $responde3 = New-PlannerTask -PlanID $PlannerPlanID -TaskName $TaskName -BucketI
 $PlannerPlanTaskID = $responde3.id
 
 #Assign task to users
-Invoke-AssignPlannerTask -TaskID $PlannerPlanTaskID -UserPrincipalNames "user01@yourdomain.com","user02@yourdomain.com"
+Invoke-AssignPlannerTask -TaskID $PlannerPlanTaskID -UserPrincipalNames "sandy@smsboot.com", "admin@smsboot.com"
 
 #Add task check list
 Add-PlannerTaskChecklist -TaskID $PlannerPlanTaskID -Title "Check1" -IsChecked $false
@@ -60,4 +63,3 @@ Update-PlannerPlanCategories -PlanID $PlannerPlanID -category1 "Kieken" -categor
 
 #Assign Planner Task lables
 Invoke-AssignPlannerTaskCategories -TaskID $PlannerPlanTaskID -category1 $false -category2 $true -category3 $true -category4 $false -category5 $false -category6 $false
-
