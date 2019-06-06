@@ -48,7 +48,7 @@ $responde3 = New-PlannerTask -PlanID $PlannerPlanID -TaskName $TaskName -BucketI
 $PlannerPlanTaskID = $responde3.id
 
 #Assign task to users
-Invoke-AssignPlannerTask -TaskID $PlannerPlanTaskID -UserPrincipalNames "sandy@smsboot.com", "admin@smsboot.com"
+Invoke-AssignPlannerTask -TaskID $PlannerPlanTaskID -UserPrincipalNames "user01@yourdomain.com", "user02@yourdomain.com"
 
 #Add task check list
 Add-PlannerTaskChecklist -TaskID $PlannerPlanTaskID -Title "Check1" -IsChecked $false
