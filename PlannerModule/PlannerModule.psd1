@@ -108,13 +108,13 @@
 	) #For performance, list functions explicitly
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = '*' 
+	CmdletsToExport = @()
 	
 	# Variables to export from this module
-	VariablesToExport = '*'
+	VariablesToExport = @()
 	
 	# Aliases to export from this module
-	AliasesToExport = '*' #For performance, list alias explicitly
+	AliasesToExport = @() #For performance, list alias explicitly
 	
 	# DSC class resources to export from this module.
 	#DSCResourcesToExport = ''
