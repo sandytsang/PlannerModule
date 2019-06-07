@@ -135,10 +135,10 @@
 			Tags = 'PSModule', 'Planner', 'MSGraph'
 			
 			# A URL to the license for this module.
-			# LicenseUri = ''
+			LicenseUri = 'https://github.com/sandytsang/PlannerModule/blob/master/LICENSE'
 			
 			# A URL to the main website for this project.
-			# ProjectUri = ''
+			ProjectUri = 'https://github.com/sandytsang/PlannerModule'
 			
 			# A URL to an icon representing this module.
 			# IconUri = ''
