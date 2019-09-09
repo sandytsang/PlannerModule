@@ -108,13 +108,13 @@
 	) #For performance, list functions explicitly
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = '*' 
+	CmdletsToExport = @()
 	
 	# Variables to export from this module
-	VariablesToExport = '*'
+	VariablesToExport = @()
 	
 	# Aliases to export from this module
-	AliasesToExport = '*' #For performance, list alias explicitly
+	AliasesToExport = @() #For performance, list alias explicitly
 	
 	# DSC class resources to export from this module.
 	#DSCResourcesToExport = ''
@@ -135,10 +135,10 @@
 			Tags = 'PSModule', 'Planner', 'MSGraph'
 			
 			# A URL to the license for this module.
-			# LicenseUri = ''
+			LicenseUri = 'https://github.com/sandytsang/PlannerModule/blob/master/LICENSE'
 			
 			# A URL to the main website for this project.
-			# ProjectUri = ''
+			ProjectUri = 'https://github.com/sandytsang/PlannerModule'
 			
 			# A URL to an icon representing this module.
 			# IconUri = ''
