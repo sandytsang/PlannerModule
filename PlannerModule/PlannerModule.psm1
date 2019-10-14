@@ -1,4 +1,4 @@
-<#	
+﻿<#	
 	===========================================================================
 	 Created on:   	6/3/2019 1:55 AM
 	 Created by:   	Zeng Yinghua
@@ -8,6 +8,7 @@
 	 Module Name: PlannerModule
 
 	Histrory: 
+	Sep.27 				Fixed a bug
 	July.25,2019 		Added $Credential parameter for authdentication
 	Jun.03.2019 		First version
 	===========================================================================
@@ -1102,7 +1103,7 @@ Function New-PlannerTask
 	#user defualt bucket name To do
 	If (!$BucketID)
 	{
-		$BucketID = (Invoke-ListPlannerPlanBuckets -PlanID $($PlanID) | Where-Object { $_.name -like 'To do' }).id
+		$BucketID = (Get-PlannerPlanBuckets -PlanID $($PlanID) | Where-Object { $_.name -like 'To do' }).id
 	}
 	
 	#if start date and due date is not definde

@@ -1,4 +1,4 @@
-<#	
+﻿<#	
 	===========================================================================
 	 Created on:   	6/3/2019 1:55 AM
 	 Created by:   	Zeng Yinghua
@@ -18,7 +18,7 @@
 	RootModule			   = 'PlannerModule.psm1'
 	
 	# Version number of this module.
-	ModuleVersion		   = '1.0.2.2'
+	ModuleVersion		   = '1.0.2.3'
 	
 	# ID used to uniquely identify this module
 	GUID				   = 'f9dfe908-e078-42d3-9276-1bd1de619e58'
@@ -77,19 +77,25 @@
 	# Functions to export from this module
 	FunctionsToExport	   = @(
 		'Get-PlannerAuthToken',
+		'Update-PlannerModuleEnvironment',
 		'Update-PlannerModuelEnvironment',
+		'Invoke-ListUnifiedGroups',
 		'Get-UnifiedGroupsList',
 		'New-AADUnifiedGroup',
 		'Add-AADUnifiedGroupMember',
 		'Get-PlannerPlanGroup',
+		'Invoke-ListPlannerPlans',
 		'Get-PlannerPlansList',
 		'Get-PlannerPlan',
+		'Invoke-ListPlannerPlanTasks',
 		'Get-PlannerPlanTasks',
+		'Invoke-ListPlannerPlanBuckets',
 		'Get-PlannerPlanBuckets',
 		'Get-PlannerTask',
 		'Get-PlannerTaskDetails',
 		'Get-PlannerPlanDetails',
 		'Get-PlannerBucket',
+		'Invoke-ListPlannerBucketTasks',
 		'Get-PlannerBucketTasksList',
 		'Get-PlannerAssignedToTaskBoardTaskFormat',
 		'Get-PlannerBucketTaskBoardTaskFormat',
