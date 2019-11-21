@@ -28,11 +28,12 @@ function Get-PlannerAuthToken
 	)
 	
 	Write-Host "Checking for AzureAD module..."
-	$AadModule = Get-Module -Name "AzureAD" -ListAvailable
+	# Always consider to select the latest version
+	$AadModule = Get-Module -Name "AzureAD" -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 	if ($AadModule -eq $null)
 	{
 		Write-Host "AzureAD PowerShell module not found, looking for AzureADPreview"
-		$AadModule = Get-Module -Name "AzureADPreview" -ListAvailable
+		$AadModule = Get-Module -Name "AzureADPreview" -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 	}
 	if ($AadModule -eq $null)
 	{
@@ -41,27 +42,9 @@ function Get-PlannerAuthToken
 		exit
 	}
 	
-	# Getting path to ActiveDirectory Assemblies
-	# If the module count is greater than 1 find the latest version
-	
-	if ($AadModule.count -gt 1)
-	{
-		$Latest_Version = ($AadModule | Select-Object version | Sort-Object)[-1]
-		$aadModule = $AadModule | ForEach-Object { $_.version -eq $Latest_Version.version }
-		
-		# Checking if there are multiple versions of the same module found        
-		if ($AadModule.count -gt 1)
-		{
-			$aadModule = $AadModule | Select-Object -Unique
-		}
-		$adal = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-		$adalforms = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
-	}
-	else
-	{
-		$adal = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-		$adalforms = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
-	}
+	# Getting path to ActiveDirectory Assemblies	
+	$adal = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+	$adalforms = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
 	
 	[System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
 	[System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
@@ -69,8 +52,8 @@ function Get-PlannerAuthToken
 	if ($PlannerEnvUpdated -ne $true)
 	{
 		$clientId = "3556cd23-09eb-42b3-a3b9-72cba5c7926e"
-	}
-	$redirectUri = "urn:ietf:wg:oauth:2.0:oob"
+		$redirectUri = "urn:ietf:wg:oauth:2.0:oob"
+	}	
 	$resourceAppIdURI = "https://graph.microsoft.com"
 	$authority = "https://login.microsoftonline.com/common"
 	
@@ -129,37 +112,11 @@ function Update-PlannerModuleEnvironment
 	param
 	(
 		[Parameter(Mandatory = $false)]
-		[string]$ClientId
-	)
-	
-	Write-Warning "WARNING: Call the 'Connect-Planner' cmdlet to use the updated environment parameters."
-	
-	Write-Host "
-	AuthUrl          : https://login.microsoftonline.com/common
-	ResourceId       : https://graph.microsoft.com
-	GraphBaseAddress : https://graph.microsoft.com
-	AppId            : $ClientId
-	RedirectLink     : urn:ietf:wg:oauth:2.0:oob
-	SchemaVersion    : beta
-
-" -ForegroundColor Cyan
-	
-	$Script:ClientId = $($ClientId)
-	$Script:PlannerEnvUpdated = $true
-}
-
-function Update-PlannerModuelEnvironment
-{
-	# .ExternalHelp PlannerModule.psm1-Help.xml
-	
-	[cmdletbinding()]
-	param
-	(
+		[string]$ClientId,
 		[Parameter(Mandatory = $false)]
-		[string]$ClientId
+		[string]$redirectUri = "urn:ietf:wg:oauth:2.0:oob"
 	)
 	
-	Write-Warning "This function has typo, please use 'Update-PlannerModuleEnvironment' instead"
 	Write-Warning "WARNING: Call the 'Connect-Planner' cmdlet to use the updated environment parameters."
 	
 	Write-Host "
@@ -167,12 +124,13 @@ function Update-PlannerModuelEnvironment
 	ResourceId       : https://graph.microsoft.com
 	GraphBaseAddress : https://graph.microsoft.com
 	AppId            : $ClientId
-	RedirectLink     : urn:ietf:wg:oauth:2.0:oob
+	RedirectLink     : $redirectUri
 	SchemaVersion    : beta
 
 " -ForegroundColor Cyan
 	
 	$Script:ClientId = $($ClientId)
+	$Script:redirectUri = $($redirectUri)
 	$Script:PlannerEnvUpdated = $true
 }
 
@@ -357,8 +315,11 @@ Function Invoke-ListPlannerPlans
 		$GroupName
 	)
 	
-	Write-Warning "This is an old function, please use 'Get-PlannerPlansList' instead"
-	
+	Begin
+    {	
+		Write-Warning "This is an old function, please use 'Get-PlannerPlansList' instead"
+	}
+
 	Process
 	{
 		try
@@ -470,9 +431,12 @@ Function Invoke-ListPlannerPlanTasks
 		[Alias("id")]
 		[string[]]$PlanID
 	)
-	
-	Write-Host "This is an old function, please use 'Get-PlannerPlanTasks' instead"
-	
+
+	Begin
+    {
+		Write-Warning "This is an old function, please use 'Get-PlannerPlanTasks' instead"
+	}
+
 	Process
 	{
 		try
@@ -540,8 +504,11 @@ Function Invoke-ListPlannerPlanBuckets
 		[Alias("id")]
 		[string[]]$PlanID
 	)
-	
-	Write-Warning "This is an old function, please use 'Get-PlannerPlanBuckets' instead"
+
+	Begin
+    {
+		Write-Warning "This is an old function, please use 'Get-PlannerPlanBuckets' instead"
+	}
 	
 	Process
 	{
@@ -741,7 +708,10 @@ Function Invoke-ListPlannerBucketTasks
 		[string[]]$BucketID
 	)
 	
-	Write-Warning "This is an old function, please use 'Get-PlannerBucketTasksList' instead"
+	Begin
+    {
+		Write-Warning "This is an old function, please use 'Get-PlannerBucketTasksList' instead"
+	}
 	
 	Process
 	{

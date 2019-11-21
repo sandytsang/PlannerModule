@@ -78,7 +78,6 @@
 	FunctionsToExport	   = @(
 		'Get-PlannerAuthToken',
 		'Update-PlannerModuleEnvironment',
-		'Update-PlannerModuelEnvironment',
 		'Invoke-ListUnifiedGroups',
 		'Get-UnifiedGroupsList',
 		'New-AADUnifiedGroup',
