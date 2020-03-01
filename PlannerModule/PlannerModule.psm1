@@ -38,7 +38,7 @@ function Get-PlannerAuthToken
 	{
 		Write-Error "AzureAD Powershell module not installed..."
 		Write-Error "Install by running 'Install-Module AzureAD' or 'Install-Module AzureADPreview' from an elevated PowerShell prompt"
-		exit
+		return
 	}
 	
 	# Getting path to ActiveDirectory Assemblies
