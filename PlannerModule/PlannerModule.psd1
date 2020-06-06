@@ -18,7 +18,7 @@
 	RootModule			   = 'PlannerModule.psm1'
 	
 	# Version number of this module.
-	ModuleVersion		   = '1.0.2.3'
+	ModuleVersion		   = '1.0.2.4'
 	
 	# ID used to uniquely identify this module
 	GUID				   = 'f9dfe908-e078-42d3-9276-1bd1de619e58'
@@ -78,8 +78,6 @@
 	FunctionsToExport	   = @(
 		'Get-PlannerAuthToken',
 		'Update-PlannerModuleEnvironment',
-		'Update-PlannerModuelEnvironment',
-		'Invoke-ListUnifiedGroups',
 		'Get-UnifiedGroupsList',
 		'New-AADUnifiedGroup',
 		'Add-AADUnifiedGroupMember',
