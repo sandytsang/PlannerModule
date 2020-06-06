@@ -46,7 +46,7 @@ function Get-PlannerAuthToken
 	
 	if ($AadModule.count -gt 1)
 	{
-		$Latest_Version = ($AadModule | Select-Object version | Sort-Object)[-1]
+		$Latest_Version = $AadModule | Select-Object version | Sort-Object | Select-Object -First 1
 		$aadModule = $AadModule | ForEach-Object { $_.version -eq $Latest_Version.version }
 		
 		# Checking if there are multiple versions of the same module found        
