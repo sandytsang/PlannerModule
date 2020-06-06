@@ -1,19 +1,24 @@
-﻿<#	
+<#
+	
 	===========================================================================
-	 Created on:   	6/3/2019 1:55 AM
-	 Created by:   	Zeng Yinghua
-	 Organization: 	
-	 Filename:     	PlannerModule.psm1
+	Created on:   	2019-06-03
+     	Updated on:    2020-06-06
+	Created by:   	Zeng Yinghua	
+	Filename:     	PlannerModule.psm1
 	-------------------------------------------------------------------------
-	 Module Name: PlannerModule
+	Module Name: PlannerModule
 
 	Histrory: 
-	Sep.27 				Fixed a bug
-	July.25,2019 		Added $Credential parameter for authdentication
-	Jun.03.2019 		First version
+	1.0.2.3 - (2020-06-06) Merged Authendicate fix from Alexey Dolgopolov, added alias for old funtion names
+	1.0.2.0 - (2019-07-25) Added $Credential parameter for authdentication
+	1.0.0.0 - (2019-06-03) First version
 	===========================================================================
 
 #>
+
+#Replace some of the old function names
+New-Alias -Name "Update-PlannerModuelEnvironment" Update-PlannerModuleEnvironment
+New-Alias -Name "Invoke-ListUnifiedGroups" Get-UnifiedGroupsList
 
 function Get-PlannerAuthToken
 {
@@ -28,12 +33,13 @@ function Get-PlannerAuthToken
 	)
 	
 	Write-Host "Checking for AzureAD module..."
-	$AadModule = Get-Module -Name "AzureAD" -ListAvailable
-	if ($AadModule -eq $null)
-	{
-		Write-Host "AzureAD PowerShell module not found, looking for AzureADPreview"
-		$AadModule = Get-Module -Name "AzureADPreview" -ListAvailable
-	}
+	# Always consider to select the latest version
+    $AadModule = Get-Module -Name "AzureAD" -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
+    if ($AadModule -eq $null)
+    {
+        Write-Host "AzureAD PowerShell module not found, looking for AzureADPreview"
+        $AadModule = Get-Module -Name "AzureADPreview" -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
+    }
 	if ($AadModule -eq $null)
 	{
 		Write-Error "AzureAD Powershell module not installed..."
@@ -42,26 +48,10 @@ function Get-PlannerAuthToken
 	}
 	
 	# Getting path to ActiveDirectory Assemblies
-	# If the module count is greater than 1 find the latest version
-	
-	if ($AadModule.count -gt 1)
-	{
-		$Latest_Version = $AadModule | Select-Object version | Sort-Object | Select-Object -First 1
-		$aadModule = $AadModule | ForEach-Object { $_.version -eq $Latest_Version.version }
-		
-		# Checking if there are multiple versions of the same module found        
-		if ($AadModule.count -gt 1)
-		{
-			$aadModule = $AadModule | Select-Object -Unique
-		}
-		$adal = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-		$adalforms = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
-	}
-	else
-	{
-		$adal = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-		$adalforms = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
-	}
+
+	$adal = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+	$adalforms = Join-Path $AadModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
+
 	
 	[System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
 	[System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
@@ -69,8 +59,8 @@ function Get-PlannerAuthToken
 	if ($PlannerEnvUpdated -ne $true)
 	{
 		$clientId = "3556cd23-09eb-42b3-a3b9-72cba5c7926e"
+		$redirectUri = "urn:ietf:wg:oauth:2.0:oob"
 	}
-	$redirectUri = "urn:ietf:wg:oauth:2.0:oob"
 	$resourceAppIdURI = "https://graph.microsoft.com"
 	$authority = "https://login.microsoftonline.com/common"
 	
@@ -129,7 +119,8 @@ function Update-PlannerModuleEnvironment
 	param
 	(
 		[Parameter(Mandatory = $false)]
-		[string]$ClientId
+		[string]$ClientId,
+		[string]$redirectUri = "urn:ietf:wg:oauth:2.0:oob"
 	)
 	
 	Write-Warning "WARNING: Call the 'Connect-Planner' cmdlet to use the updated environment parameters."
@@ -139,63 +130,13 @@ function Update-PlannerModuleEnvironment
 	ResourceId       : https://graph.microsoft.com
 	GraphBaseAddress : https://graph.microsoft.com
 	AppId            : $ClientId
-	RedirectLink     : urn:ietf:wg:oauth:2.0:oob
+	RedirectLink     : $redirectUri
 	SchemaVersion    : beta
 
 " -ForegroundColor Cyan
 	
 	$Script:ClientId = $($ClientId)
 	$Script:PlannerEnvUpdated = $true
-}
-
-function Update-PlannerModuelEnvironment
-{
-	# .ExternalHelp PlannerModule.psm1-Help.xml
-	
-	[cmdletbinding()]
-	param
-	(
-		[Parameter(Mandatory = $false)]
-		[string]$ClientId
-	)
-	
-	Write-Warning "This function has typo, please use 'Update-PlannerModuleEnvironment' instead"
-	Write-Warning "WARNING: Call the 'Connect-Planner' cmdlet to use the updated environment parameters."
-	
-	Write-Host "
-	AuthUrl          : https://login.microsoftonline.com/common
-	ResourceId       : https://graph.microsoft.com
-	GraphBaseAddress : https://graph.microsoft.com
-	AppId            : $ClientId
-	RedirectLink     : urn:ietf:wg:oauth:2.0:oob
-	SchemaVersion    : beta
-
-" -ForegroundColor Cyan
-	
-	$Script:ClientId = $($ClientId)
-	$Script:PlannerEnvUpdated = $true
-}
-
-Function Invoke-ListUnifiedGroups
-{
-	# .ExternalHelp PlannerModule.psm1-Help.xml	
-	Write-Warning "This is an old function, please use 'Get-UnifiedGroupsList' instead"
-	try
-	{
-		$uri = "https://graph.microsoft.com/beta/Groups?`$filter=groupTypes/any(c:c+eq+'Unified')"
-		(Invoke-RestMethod -Uri $uri -Headers $authToken -Method Get).Value
-	}
-	catch
-	{
-		$ex = $_.Exception
-		if ($($ex.Response.StatusDescription) -match 'Unauthorized')
-		{
-			Write-Error "Unauthorized, Please check your permissions and use the 'Connect-Planner' command to authenticate"
-		}
-		Write-Error "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
-		break
-	}
-	
 }
 
 Function Get-UnifiedGroupsList
@@ -1496,57 +1437,56 @@ Function Connect-Planner
 {
 	# .ExternalHelp PlannerModule.psm1-Help.xml
 	
-	[CmdletBinding()]
-	[OutputType([Bool])]
-	Param
-	(
-		[Parameter(Mandatory = $false, Position = 0, ParameterSetName = "AuthPrompt")]
-		[ValidateNotNullOrEmpty()]
-		[ValidateSet($false, $true)]
-		$ForceNonInteractive,
-		[parameter(Mandatory = $false, ParameterSetName = "AuthCredential", HelpMessage = "Specify a PSCredential object containing username and password.")]
-		[ValidateNotNullOrEmpty()]
-		[PSCredential]$Credential
-	)
+    [cmdletbinding(DefaultParameterSetName='$ForceInteractive')]
+    Param
+    (
+        
+        [Parameter(Mandatory = $false, ParameterSetName = "AuthPrompt")]
+        [Switch] $ForceInteractive,
+        [parameter(Mandatory = $false, ParameterSetName = "AuthCredential", HelpMessage = "Specify a PSCredential object containing username and password.")]
+        [ValidateNotNullOrEmpty()]
+        [PSCredential]$Credential
+    )
 	
 	
 	#Authentication
-	
-	if ($ForceNonInteractive -eq $true)
-	{
-		# Getting the authorization token
-		$Script:authToken = Get-PlannerAuthToken
-		return $authToken
-	}
-	
-	if ($ForceNonInteractive -eq $false)
-	{
-		
-		# Checking if authToken exists before running authentication
-		if ($Script:authToken)
-		{
-			# Setting DateTime to Universal time to work in all timezones
-			$DateTime = (Get-Date).ToUniversalTime()
-			# If the authToken exists checking when it expires
-			$TokenExpires = ($authToken.ExpiresOn.datetime - $DateTime).Minutes
-			if ($TokenExpires -le 0)
-			{
-				Write-Host "Authentication Token expired" $TokenExpires "minutes ago"
-				$Script:authToken = Get-PlannerAuthToken
-			}
-		}
-		# Authentication doesn't exist, calling Get-AuthToken function
-		else
-		{
-			# Getting the authorization token
-			$Script:authToken = Get-PlannerAuthToken
-		}
-	}
-	
 	if ($Credential)
 	{
 		# Getting the authorization token
 		$Script:authToken = Get-PlannerAuthToken -Credential $Credential
 	}
+    else {
+	
+	    if ($ForceInteractive -eq $true)
+	    {
+		    # Getting the authorization token
+		    $Script:authToken = Get-PlannerAuthToken
+		    return $authToken
+	    }
+	
+	    if ($ForceInteractive -eq $false)
+	    {
+		
+		    # Checking if authToken exists before running authentication
+		    if ($Script:authToken)
+		    {
+			    # Setting DateTime to Universal time to work in all timezones
+			    $DateTime = (Get-Date).ToUniversalTime()
+			    # If the authToken exists checking when it expires
+			    $TokenExpires = ($authToken.ExpiresOn.datetime - $DateTime).Minutes
+			    if ($TokenExpires -le 0)
+			    {
+				    Write-Host "Authentication Token expired" $TokenExpires "minutes ago"
+				    $Script:authToken = Get-PlannerAuthToken
+			    }
+		    }
+		    # Authentication doesn't exist, calling Get-AuthToken function
+		    else
+		    {
+			    # Getting the authorization token
+			    $Script:authToken = Get-PlannerAuthToken
+		    }
+	    }
+    }
 	
 }
