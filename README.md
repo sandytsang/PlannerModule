@@ -15,7 +15,7 @@ if ($PlannerModule -eq $null)
 
 
 #Connect to Microsoft Planner
-Connect-Planner -ForceNonInteractive True
+Connect-Planner
 
 #Definde variables
 $GroupName = "A NewPlan 01"
