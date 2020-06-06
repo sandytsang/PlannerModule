@@ -1,15 +1,15 @@
 <#
 	
 	===========================================================================
-	Created on:   	2019-06-03
-     	Updated on:    2020-06-06
+	Created on:	2019-06-03
+     	Updated on:	2020-06-06
 	Created by:   	Zeng Yinghua	
 	Filename:     	PlannerModule.psm1
 	-------------------------------------------------------------------------
 	Module Name: PlannerModule
 
 	Histrory: 
-	1.0.2.3 - (2020-06-06) Merged Authendicate fix from Alexey Dolgopolov, added alias for old funtion names
+	1.0.2.4 - (2020-06-06) Merged Authendicate fix from Alexey Dolgopolov, added alias for old funtion names
 	1.0.2.0 - (2019-07-25) Added $Credential parameter for authdentication
 	1.0.0.0 - (2019-06-03) First version
 	===========================================================================
