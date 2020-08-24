@@ -13,9 +13,15 @@ if ($PlannerModule -eq $null)
 	Install-Module "PlannerModule" -AllowClobber -Force
 }
 
+#Update Planner module environment to use your own app id
+Update-PlannerModuleEnvironment -ClientId "Your_App_ID_here"
 
-#Connect to Microsoft Planner
-Connect-Planner
+#Connect to Microsoft Planner (if using MFA)
+Connect-Planner -ForceInteractive
+
+#Connect to Microsoft Planner (if not using MFA)
+$Cred = Get-Credential
+Connect-Planner -Credential $Cred
 
 #Definde variables
 $GroupName = "A NewPlan 01"
